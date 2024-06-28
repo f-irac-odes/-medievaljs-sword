@@ -59,9 +59,9 @@ const customEntity = world.createEntity({
 }); // ➕ Create a custom entity with specific components
 5. Adding and Removing Tags
 Categorize entities by adding tags:
+```
 
-typescript
-Copy code
+```typescript
 // Add tags to entities
 world.addTag(movingEntity, 'TagA');
 world.addTag(movingEntity, 'TagB'); // 🏷️ Add tags to categorize entities
