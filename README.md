@@ -47,16 +47,16 @@ ECS promotes flexibility, scalability, and performance by decoupling data and be
 
 ## 📘 Usage
 
-1. Setup
+1. Setup <br>
 Ensure you have the World class and necessary interfaces defined in your TypeScript environment.
 
-2. Creating a World Instance
+2. Creating a World Instance <br>
 Initialize the ECS world:
 
 ```typescript
 const world = new World<MovingEntity>(); // 🌍 Create a new ECS world instance (MovingEntity is a type...)
 ```
-3. Registering Archetypes
+3. Registering Archetypes <br>
 Define and register archetypes to create entity templates:
 
 ```typescript
@@ -74,7 +74,7 @@ const MovingArchetype: Archetype<Entity & Position & Velocity> = {
 world.registerArchetype('Basic', BasicArchetype);
 world.registerArchetype('Moving', MovingArchetype); // 📚 Register archetypes for entity creation
 ```
-4. Creating Entities
+4. Creating Entities <br>
 Create entities using archetypes or custom components:
 
 ```typescript
@@ -88,14 +88,14 @@ const customEntity = world.createEntity({
   velocity: { dx: 2, dy: 2 },
 }); // ➕ Create a custom entity with specific components
 ```
-5. Adding and Removing Tags
+5. Adding and Removing Tags <br>
 Categorize entities by adding tags:
 ```typescript
 // Add tags to entities
 world.addTag(movingEntity, 'TagA');
 world.addTag(movingEntity, 'TagB'); // 🏷️ Add tags to categorize entities
 ```
-6. Subscribing to Events
+6. Subscribing to Events <br>
 Monitor entity lifecycle changes or query result changes:
 
 ```typescript
@@ -112,7 +112,7 @@ world.subscribeToEvent('queryChanged', ({ entities, addedEntities, removedEntiti
   console.log('Removed entities:', removedEntities);
 }); // 📢 Subscribe to events for entity lifecycle and query changes
 ```
-7. Querying Entities
+7. Querying Entities <br>
 Retrieve entities based on specific criteria:
 
 ```typescript
@@ -128,7 +128,7 @@ addHook(entity => console.log('Entity added to TagA query result:', entity));
 removeHook(entity => console.log('Entity removed from TagA query result:', entity)); // 🔍 Query entities and monitor changes in the result
 ````
 
-8. Adding Systems and Running Simulation
+8. Adding Systems and Running Simulation <br>
 Define systems to process entities and run the simulation loop:
 
 ```typescript
