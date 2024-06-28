@@ -1,4 +1,4 @@
-![sword image](https://github.com/f-irac-odes/-medievaljs-sword/assets/108071425/79d1773a-d181-49a8-9036-964035e6b293)
+<img src="[drawing.jpg](https://github.com/f-irac-odes/-medievaljs-sword/assets/108071425/79d1773a-d181-49a8-9036-964035e6b293)" alt="sword image" width="200"/>
 # Sword
 the agressive entity-component-system for complex games
 
