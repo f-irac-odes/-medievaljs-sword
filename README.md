@@ -14,6 +14,39 @@ ECS (Entity-Component-System) is an architectural pattern used in software devel
 * System: Processes entities that have specific components, performing actions or calculations.
 ECS promotes flexibility, scalability, and performance by decoupling data and behavior, allowing for dynamic entity composition and efficient processing of game or simulation logic.
 
+## 📦 Features
+
+* 👾 Entities: Representations of objects in the world, typically identified by unique IDs.
+
+* 🧩 Components: Modular pieces of data that define the attributes or behavior of entities (e.g., position, health, AI state).
+
+* 🧠 Systems: Processes or behaviors that operate on entities with specific components, decoupled from the entities themselves.
+
+* 👨🏼‍🦳 Archetypes: Templates for creating entities with predefined sets of components, facilitating rapid entity creation.
+
+* 🏷 Tags: Lightweight markers or flags attached to entities to categorize or identify them (e.g., "Player", "Enemy").
+
+* 🔎 Querying: Mechanism to retrieve entities based on specific criteria (e.g., components, tags), supporting dynamic entity selection.
+
+* 🪝 Lifecycle Hooks: Callbacks or event handlers triggered when entities are added, removed, or modified, enabling responsive behavior.
+
+* 🎭 Event-driven Architecture: Subscriptions to events such as entity lifecycle changes or query results updates, promoting modular and reactive design patterns.
+
+* 🏃🏼‍♀️ Asynchronous Processing: Capability to handle systems or operations asynchronously, enhancing performance and responsiveness.
+
+* 𝌰 Serialization: Ability to save and load the state of entities and components, facilitating persistence and game state management.
+
+* 📸 Entity Snapshotting: Mechanism to capture and restore the state of entities at specific points in time, useful for undo/redo functionality or game replays.
+
+* 🔦 Advanced Querying: Support for complex queries combining logical conditions (AND, OR, NOT) on components and tags, providing flexible entity selection.
+
+* ᅔ Hierarchical Entities: Ability to organize entities into hierarchical structures or prefabs, enhancing reuse and management of complex entity configurations.
+
+* 🌎 Efficient Rendering and Update: Optimization techniques to minimize processing overhead, suitable for real-time applications like games or simulations.
+
+* 🔌 Extensibility and Modularity: Framework design that supports easy integration of new components, systems, or features, promoting code reuse and scalability.
+  
+* 🔓 Typescript support with typed entities
 
 ## 📘 Usage
 
@@ -24,7 +57,7 @@ Ensure you have the World class and necessary interfaces defined in your TypeScr
 Initialize the ECS world:
 
 ```typescript
-const world = new World<MovingEntity>(); // 🌍 Create a new ECS world instance
+const world = new World<MovingEntity>(); // 🌍 Create a new ECS world instance (MovingEntity is a type...)
 ```
 3. Registering Archetypes
 Define and register archetypes to create entity templates:
