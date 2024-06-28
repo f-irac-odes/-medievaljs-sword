@@ -1,4 +1,4 @@
-interface Entity {
+export interface Entity {
 	[key: string]: any;
 }
 type LifecycleHook<T extends Entity> = (entity: T) => void;
@@ -6,22 +6,22 @@ type UpdateHook = (deltaTime: number) => void;
 
 type EventCallback<T> = (eventData: T) => void;
 
-interface EntityEvent<T extends Entity> {
+export interface EntityEvent<T extends Entity> {
 	entity: T;
 }
 
-interface QueryEvent<T extends Entity> {
+export interface QueryEvent<T extends Entity> {
 	entities: T[];
 	addedEntities: T[];
 	removedEntities: T[];
 }
 
-type Archetype<T extends Entity> = Partial<T>;
+export type Archetype<T extends Entity> = Partial<T>;
 
 /**
  * Represents an Entity-Component-System (ECS) world.
  */
-class World<T extends Entity> {
+export class World<T extends Entity> {
 	private entities: T[] = []; // List of all entities in the world
 	private archetypes: Map<string, Archetype<T>> = new Map(); // Map of archetype names to archetype definitions
 	private systems: ((entities: T[], deltaTime: number) => void | Promise<void>)[] = []; // List of systems to process entities
@@ -59,6 +59,14 @@ class World<T extends Entity> {
 		this.emitEvent('entityAdded', { entity });
 		this.onEntityAddedHooks.forEach((hook) => hook(entity));
 		return entity;
+	}
+
+	updateEntity (e: T, updateOrFn: Function | object) {
+		if (typeof updateOrFn === 'function') {
+			updateOrFn(e);
+		} else {
+			Object.assign(e, updateOrFn);
+		}
 	}
 
 	/**
@@ -241,7 +249,7 @@ class World<T extends Entity> {
 		}
 	}
 
-	private emitEvent<T>(eventName: string, eventData: T) {
+	emitEvent<T>(eventName: string, eventData: T) {
 		const listeners = this.eventListeners.get(eventName);
 		if (listeners) {
 			listeners.forEach((listener) => listener(eventData));
