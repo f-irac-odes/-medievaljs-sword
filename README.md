@@ -87,10 +87,9 @@ const customEntity = world.createEntity({
   position: { x: 10, y: 20 },
   velocity: { dx: 2, dy: 2 },
 }); // ➕ Create a custom entity with specific components
+```
 5. Adding and Removing Tags
 Categorize entities by adding tags:
-```
-
 ```typescript
 // Add tags to entities
 world.addTag(movingEntity, 'TagA');
