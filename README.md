@@ -94,7 +94,7 @@ const customEntity = world.createEntity({
   velocity: { dx: 2, dy: 2 },
 }); // ➕ Create a custom entity with specific components
 ```
-5. Adding / Removing / Updating an entity
+5. Adding / Removing / Updating an entity component
  ```typescript
 // Add component
   world.addComponent(customEntity, 'name', 'player')
