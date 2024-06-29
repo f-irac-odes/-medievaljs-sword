@@ -61,12 +61,33 @@ export class World<T extends Entity> {
 		return entity;
 	}
 
-	updateEntity (e: T, updateOrFn: Function | object) {
+	updateEntity(e: T, updateOrFn: Function | object) {
 		if (typeof updateOrFn === 'function') {
 			updateOrFn(e);
 		} else {
 			Object.assign(e, updateOrFn);
 		}
+	}
+
+	/**
+	 * Adds a component to the specified entity.
+	 * @param entity The entity to which the component will be added.
+	 * @param componentKey The key of the component to add.
+	 * @param componentValue The value of the component.
+	 */
+	addComponent<K extends keyof T>(entity: T, componentKey: K, componentValue: T[K]) {
+		entity[componentKey] = componentValue;
+		this.emitQueryEvents([entity]);
+	}
+
+	/**
+	 * Removes a component from the specified entity.
+	 * @param entity The entity from which the component will be removed.
+	 * @param componentKey The key of the component to remove.
+	 */
+	removeComponent<K extends keyof T>(entity: T, componentKey: K) {
+		delete entity[componentKey];
+		this.emitQueryEvents([entity]);
 	}
 
 	/**
