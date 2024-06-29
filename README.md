@@ -123,7 +123,7 @@ Monitor entity lifecycle changes or query result changes:
 world.emitEvent('player-died', customEntity);
 
 //subscribe to that event
-world.subscribeToEvent('entityAdded', ( entity ) => {
+world.subscribeToEvent('player-died', ( entity ) => {
   console.log('Player died:', entity);
 });
 
