@@ -16,15 +16,15 @@ export interface QueryEvent<T extends Entity> {
 	removedEntities: T[];
 }
 
-export type Archetype<T extends Entity> = Partial<T>;
+export type Archetype<T> = Partial<T>;
 
 /**
  * Represents an Entity-Component-System (ECS) world.
  */
 export class World<T extends Entity> {
 	private entities: T[] = []; // List of all entities in the world
-	private archetypes: Map<string, Archetype<T>> = new Map(); // Map of archetype names to archetype definitions
-	private systems: ((entities: T[], deltaTime: number) => void | Promise<void>)[] = []; // List of systems to process entities
+	private archetypes: Map<string, Archetype<any>> = new Map(); // Map of archetype names to archetype definitions
+	systems: ((dt: number) => void | Promise<void>)[] = []; // List of systems to process entities
 	private onEntityAddedHooks: LifecycleHook<T>[] = []; // List of hooks to execute when an entity is added
 	private onEntityRemovedHooks: LifecycleHook<T>[] = []; // List of hooks to execute when an entity is removed
 	private onUpdateHooks: UpdateHook[] = []; // List of hooks to execute on each update tick
@@ -49,12 +49,12 @@ export class World<T extends Entity> {
 	 * @returns The created entity.
 	 * @throws Error if the archetype with the given name is not found.
 	 */
-	createEntityFromArchetype(archetypeName: string): T {
+	createEntityFromArchetype(archetypeName: string, newState: any): T {
 		const archetype = this.archetypes.get(archetypeName);
 		if (!archetype) {
 			throw new Error(`Archetype "${archetypeName}" not found.`);
 		}
-		const entity = { ...archetype } as T;
+		const entity = { ...archetype, ...newState } as T;
 		this.entities.push(entity);
 		this.emitEvent('entityAdded', { entity });
 		this.onEntityAddedHooks.forEach((hook) => hook(entity));
@@ -107,7 +107,7 @@ export class World<T extends Entity> {
 	 * Adds a system to the world for processing entities.
 	 * @param system The system function that processes entities.
 	 */
-	addSystem(system: (entities: T[], deltaTime: number) => void | Promise<void>) {
+	addSystem(system: (dt: number) => void | Promise<void>) {
 		this.systems.push(system);
 	}
 
@@ -142,7 +142,7 @@ export class World<T extends Entity> {
 	async runSystems(deltaTime: number) {
 		this.onUpdateHooks.forEach((hook) => hook(deltaTime));
 		for (const system of this.systems) {
-			await system(this.entities, deltaTime);
+			await system(deltaTime);
 		}
 	}
 
@@ -153,7 +153,7 @@ export class World<T extends Entity> {
 	 */
 	query(filter: {
 		has?: (keyof T)[];
-		where?: (entity: T) => boolean;
+		where?: (entity: T) => void;
 		none?: (keyof T)[];
 		tags?: (keyof T)[];
 	}): {
@@ -225,7 +225,7 @@ export class World<T extends Entity> {
 	 * @param entity The entity to add the tag to.
 	 * @param tag The tag to add.
 	 */
-	addTag(entity: T, tag: keyof T) {
+	addTag(entity: T, tag: keyof T | string) {
 		entity[tag] = {} as T[keyof T];
 	}
 

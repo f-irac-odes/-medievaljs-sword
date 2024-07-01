@@ -1,3 +1,3 @@
-import { World, Entity, Archetype, EntityEvent, QueryEvent } from './ecs.js';
+import { World, type Entity, type Archetype, type EntityEvent, type QueryEvent } from './ecs';
 
 export { World, type Entity, type Archetype, type EntityEvent, type QueryEvent };
