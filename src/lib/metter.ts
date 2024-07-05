@@ -8,7 +8,7 @@ type ColliderOptions = {
   args?: any[];
 };
 
-export class Matter {
+export class Newton {
   world: RAPIER.World;
   bodies: RAPIER.RigidBody[] = [];
   colliders: RAPIER.Collider[] = [];

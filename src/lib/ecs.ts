@@ -1,9 +1,18 @@
+// Define interfaces and types
 export interface Entity {
 	[key: string]: any;
 }
+
+function keyValue(map: Map<any, any>, searchKey: any) {
+    for (const [key, value] of map.entries()) {
+        if (value === searchKey)
+            return key;
+    }
+    return undefined;
+}
+
 type LifecycleHook<T extends Entity> = (entity: T) => void;
 type UpdateHook = (deltaTime: number) => void;
-
 type EventCallback<T> = (eventData: T) => void;
 
 export interface EntityEvent<T extends Entity> {
@@ -18,17 +27,38 @@ export interface QueryEvent<T extends Entity> {
 
 export type Archetype<T> = Partial<T>;
 
-/**
- * Represents an Entity-Component-System (ECS) world.
- */
+// Define World class
 export class World<T extends Entity> {
-	private entities: T[] = []; // List of all entities in the world
-	private archetypes: Map<string, Archetype<any>> = new Map(); // Map of archetype names to archetype definitions
-	systems: ((dt: number) => void | Promise<void>)[] = []; // List of systems to process entities
-	private onEntityAddedHooks: LifecycleHook<T>[] = []; // List of hooks to execute when an entity is added
-	private onEntityRemovedHooks: LifecycleHook<T>[] = []; // List of hooks to execute when an entity is removed
-	private onUpdateHooks: UpdateHook[] = []; // List of hooks to execute on each update tick
-	private eventListeners: Map<string, EventCallback<any>[]> = new Map(); // Map of event names to event listener callbacks
+	entities: T[] = [];
+	archetypes: Map<string, Archetype<any>> = new Map();
+	systems: ((dt: number) => void | Promise<void>)[] = [];
+	onEntityAddedHooks: LifecycleHook<T>[] = [];
+	onEntityRemovedHooks: LifecycleHook<T>[] = [];
+	onUpdateHooks: UpdateHook[] = [];
+	eventListeners: Map<string, EventCallback<any>[]> = new Map();
+	private entityById: Map<number, T> = new Map();
+	private nextId: number = 1;
+	private entityCreationQueue: Partial<T>[] = []; // Queue for deferred entity creation
+
+	/**
+	 * Generates a unique numeric ID for an entity.
+	 * @param entity The entity to generate the ID for.
+	 * @returns The generated unique ID.
+	 */
+	genID(entity: T): number {
+		const id = this.nextId++;
+		this.entityById.set(id, entity);
+		return id;
+	}
+
+	/**
+	 * Retrieves an entity by its ID.
+	 * @param id The ID of the entity to retrieve.
+	 * @returns The entity with the specified ID.
+	 */
+	byID(id: number): T | undefined {
+		return this.entityById.get(id);
+	}
 
 	/**
 	 * Creates a new entity with the given components.
@@ -46,6 +76,7 @@ export class World<T extends Entity> {
 	/**
 	 * Creates a new entity from a registered archetype.
 	 * @param archetypeName The name of the archetype to use for creating the entity.
+	 * @param newState The state to initialize the new entity with.
 	 * @returns The created entity.
 	 * @throws Error if the archetype with the given name is not found.
 	 */
@@ -56,11 +87,17 @@ export class World<T extends Entity> {
 		}
 		const entity = { ...archetype, ...newState } as T;
 		this.entities.push(entity);
+		this.genID(entity);
 		this.emitEvent('entityAdded', { entity });
 		this.onEntityAddedHooks.forEach((hook) => hook(entity));
 		return entity;
 	}
 
+	/**
+	 * Function used to update multiple properties
+	 * @param e the entity to update
+	 * @param updateOrFn an object or function
+	 */
 	updateEntity(e: T, updateOrFn: Function | object) {
 		if (typeof updateOrFn === 'function') {
 			updateOrFn(e);
@@ -98,6 +135,8 @@ export class World<T extends Entity> {
 		const index = this.entities.indexOf(entity);
 		if (index !== -1) {
 			this.entities.splice(index, 1);
+			let id = keyValue(this.entityById, entity)
+			this.entityById.delete(id);
 			this.emitEvent('entityRemoved', { entity });
 			this.onEntityRemovedHooks.forEach((hook) => hook(entity));
 		}
@@ -112,37 +151,23 @@ export class World<T extends Entity> {
 	}
 
 	/**
-	 * Adds a hook to execute when an entity is added to the world.
-	 * @param hook The hook function to execute.
-	 */
-	addOnEntityAddedHook(hook: LifecycleHook<T>) {
-		this.onEntityAddedHooks.push(hook);
-	}
-
-	/**
-	 * Adds a hook to execute when an entity is removed from the world.
-	 * @param hook The hook function to execute.
-	 */
-	addOnEntityRemovedHook(hook: LifecycleHook<T>) {
-		this.onEntityRemovedHooks.push(hook);
-	}
-
-	/**
-	 * Adds a hook to execute on each update tick of the world.
-	 * @param hook The hook function to execute.
-	 */
-	addOnUpdateHook(hook: UpdateHook) {
-		this.onUpdateHooks.push(hook);
-	}
-
-	/**
 	 * Runs all systems in the world with the given delta time.
 	 * @param deltaTime The time elapsed since the last update.
 	 */
 	async runSystems(deltaTime: number) {
 		this.onUpdateHooks.forEach((hook) => hook(deltaTime));
+
+		// Execute systems
 		for (const system of this.systems) {
 			await system(deltaTime);
+		}
+
+		// Process deferred entity creation queue
+		while (this.entityCreationQueue.length > 0) {
+			const entityData = this.entityCreationQueue.shift();
+			if (entityData) {
+				this.createEntity(entityData); // Assuming `createEntity` handles actual entity creation
+			}
 		}
 	}
 
@@ -221,6 +246,30 @@ export class World<T extends Entity> {
 	}
 
 	/**
+	 * Adds a hook to execute when an entity is added to the world.
+	 * @param hook The hook function to execute.
+	 */
+	addOnEntityAddedHook(hook: LifecycleHook<T>) {
+		this.onEntityAddedHooks.push(hook);
+	}
+
+	/**
+	 * Adds a hook to execute when an entity is removed from the world.
+	 * @param hook The hook function to execute.
+	 */
+	addOnEntityRemovedHook(hook: LifecycleHook<T>) {
+		this.onEntityRemovedHooks.push(hook);
+	}
+
+	/**
+	 * Adds a hook to execute on each update tick of the world.
+	 * @param hook The hook function to execute.
+	 */
+	addOnUpdateHook(hook: UpdateHook) {
+		this.onUpdateHooks.push(hook);
+	}
+
+	/**
 	 * Adds a tag to the specified entity.
 	 * @param entity The entity to add the tag to.
 	 * @param tag The tag to add.
@@ -243,15 +292,34 @@ export class World<T extends Entity> {
 	 * @returns The JSON representation of the world state.
 	 */
 	toJSON(): string {
-		return JSON.stringify(this.entities);
+		return JSON.stringify({
+			entities: this.entities,
+			systems: this.systems,
+			archetypes: Array.from(this.archetypes.entries()),
+			eventListeners: Array.from(this.eventListeners.entries()),
+			onUpdateHooks: this.onUpdateHooks,
+			onEntityAddedHooks: this.onEntityAddedHooks,
+			onEntityRemovedHooks: this.onEntityRemovedHooks
+		});
 	}
 
 	/**
 	 * Restores the world state from JSON format.
 	 * @param json The JSON representation of the world state.
 	 */
-	fromJSON(json: string) {
-		this.entities = JSON.parse(json) as T[];
+	fromJSON(json: any) {
+		this.entities = JSON.parse(json.entities) as T[];
+		this.systems = JSON.parse(json.systems);
+		this.archetypes = new Map<string, Archetype<T>>();
+		for (const [name, archetype] of JSON.parse(json.archetypes)) {
+			this.archetypes.set(name, archetype);
+		}
+		for (const [name, eventListener] of JSON.parse(json.eventListeners)) {
+			this.eventListeners.set(name, eventListener);
+		}
+		this.onUpdateHooks = JSON.parse(json.onUpdateHooks);
+		this.onEntityAddedHooks = JSON.parse(json.onEntityAddedHooks);
+		this.onEntityRemovedHooks = JSON.parse(json.onEntityRemovedHooks);
 	}
 
 	private emitQueryEvents(matchedEntities: T[]) {
