@@ -1,4 +1,5 @@
 import RAPIER, { World } from '@dimforge/rapier3d-compat';
+import * as THREE from 'three'
 
 type RigidBodyOptions = {
   type?: RAPIER.RigidBodyType;
@@ -24,7 +25,7 @@ export class Newton {
     return body;
   }
 
-  addCollider(shapeS: string, body: RAPIER.RigidBody, options: ColliderOptions = {}): RAPIER.Collider {
+  addCollider(shapeS: string, body?: RAPIER.RigidBody, options: ColliderOptions = {}): RAPIER.Collider {
     const shape = (RAPIER.ColliderDesc as any)[shapeS](...(options.args || [1]));
     const collider = this.world.createCollider(shape, body);
     this.colliders.push(collider);
