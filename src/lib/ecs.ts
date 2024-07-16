@@ -372,7 +372,7 @@ export interface Entity {
 	 * @param eventName The name of the event to emit.
 	 * @param eventData The data associated with the event.
 	 */
-	private emitEvent<T>(eventName: string, eventData: T) {
+	emitEvent<T>(eventName: string, eventData: T) {
 	  const listeners = this.eventListeners.get(eventName);
 	  if (listeners) {
 		listeners.forEach((listener) => listener(eventData));
