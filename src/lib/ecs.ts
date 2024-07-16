@@ -336,19 +336,20 @@ export interface Entity {
 	 * Restores the world state from JSON format.
 	 * @param json The JSON representation of the world state.
 	 */
-	fromJSON(json: any) {
-	  this.entities = JSON.parse(json.entities) as T[];
-	  this.systems = JSON.parse(json.systems);
+	fromJSON(json: string) {
+	  const Njson = JSON.parse(json);
+	  this.entities = JSON.parse(Njson.entities) as T[];
+	  this.systems = JSON.parse(Njson.systems);
 	  this.archetypes = new Map<string, Archetype<T>>();
-	  for (const [name, archetype] of JSON.parse(json.archetypes)) {
+	  for (const [name, archetype] of JSON.parse(Njson.archetypes)) {
 		this.archetypes.set(name, archetype);
 	  }
-	  for (const [name, eventListener] of JSON.parse(json.eventListeners)) {
+	  for (const [name, eventListener] of JSON.parse(Njson.eventListeners)) {
 		this.eventListeners.set(name, eventListener);
 	  }
-	  this.onUpdateHooks = JSON.parse(json.onUpdateHooks);
-	  this.onEntityAddedHooks = JSON.parse(json.onEntityAddedHooks);
-	  this.onEntityRemovedHooks = JSON.parse(json.onEntityRemovedHooks);
+	  this.onUpdateHooks = JSON.parse(Njson.onUpdateHooks);
+	  this.onEntityAddedHooks = JSON.parse(Njson.onEntityAddedHooks);
+	  this.onEntityRemovedHooks = JSON.parse(Njson.onEntityRemovedHooks);
 	}
   
 	private emitQueryEvents(matchedEntities: T[]) {
