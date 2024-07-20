@@ -63,7 +63,8 @@ const player = world.createEntity({
 	health: { current: 100, max: 100}}, 
 	({entity, componets}) => {
 		console.log('the entity:', entity, 'has components:', components);
-	});
+	}
+);
 ```
 
 🧩 Add, remove components to the entity and update it:
