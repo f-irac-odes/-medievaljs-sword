@@ -1,6 +1,4 @@
-<img src="https://github.com/f-irac-odes/-medievaljs-sword/assets/108071425/79d1773a-d181-49a8-9036-964035e6b293" alt="sword image" height="200"/>
-
-# Sword: the agressive ECS for complex games
+# ⚔️ Sword: the agressive ECS for complex games
 
 ## 🤨 What is an ECS ?
 
@@ -44,161 +42,230 @@ ECS (Entity-Component-System) is an architectural pattern used in software devel
 - 🔌 Extensibility and Modularity: Framework design that supports easy integration of new components, systems, or features, promoting code reuse and scalability.
 - 🔓 Typescript support with typed entities
 
-## 📘 Usage
+## 📘 Basic Usage
 
-1. Setup <br>
-   Ensure you have the World class and necessary interfaces defined in your TypeScript environment.
-
-2. Creating a World Instance <br>
-   Initialize the ECS world:
-
-```typescript
-
-type MovungEntity {
-  velocity: {dx: number, dy: number};
-  position: {x: number, y: number};
-}
-
-const world = new World<MovingEntity>(); // 🌍 Create a new ECS world instance (MovingEntity is a type...)
+📦 Install the package
+```bash
+ npm install @medieval/sword
 ```
-
-3. Registering Archetypes <br>
-   Define and register archetypes to create entity templates:
+🌎 Create a world: 
 
 ```typescript
-// Define archetypes
-const BasicArchetype: Archetype<Entity> = {
-	position: { x: 0, y: 0 }
-}; // 📜 Define a basic archetype with position component
+import { World } from '@medieval/sword'
 
-const MovingArchetype: Archetype<Entity & Position & Velocity> = {
-	...BasicArchetype,
-	velocity: { dx: 1, dy: 1 }
-}; // 🚀 Define a moving archetype with position and velocity components
-
-// Register archetypes
-world.registerArchetype('Basic', BasicArchetype);
-world.registerArchetype('Moving', MovingArchetype); // 📚 Register archetypes for entity creation
+const world = new World()
 ```
-
-4. Creating Entities <br>
-   Create entities using archetypes or custom components:
+👾 Create an entity:
 
 ```typescript
-// Create entities from archetypes
-const basicEntity = world.createEntityFromArchetype('Basic');
-const movingEntity = world.createEntityFromArchetype('Moving'); // 🌟 Create entities using defined archetypes
-
-// Add components directly to entities
-const customEntity = world.createEntity({
-	position: { x: 10, y: 20 },
-	velocity: { dx: 2, dy: 2 }
-}); // ➕ Create a custom entity with specific components
-```
-
-5. Adding / Removing / Updating an entity component
-
-```typescript
-// Add component
-world.addComponent(customEntity, 'name', 'player');
-
-// Remove component
-world.removeComponent(customEntity, 'name');
-
-// Update entity components
-world.updateEntity(customEntity, { name: 'player', acceleration: 0.8 });
-world.updateEntity(customEntity, (e) => delete e.name);
-```
-
-7. Adding and Removing Tags <br>
-   Categorize entities by adding tags:
-
-```typescript
-// Add tags to entities
-world.addTag(movingEntity, 'TagA');
-world.addTag(movingEntity, 'TagB'); // 🏷️ Add tags to categorize entities
-```
-
-7. Subscribing to Events <br>
-   Monitor entity lifecycle changes or query result changes:
-
-```typescript
-// create any event
-world.emitEvent('player-died', customEntity);
-
-//subscribe to that event
-world.subscribeToEvent('player-died', (entity) => {
-	console.log('Player died:', entity);
-});
-
-// Subscribe to entity added event
-world.subscribeToEvent('entityAdded', ({ entity }) => {
-	console.log('Entity added:', entity);
-});
-
-// Subscribe to query result changed event
-world.subscribeToEvent('queryChanged', ({ entities, addedEntities, removedEntities }) => {
-	console.log('Query result changed:');
-	console.log('Current entities:', entities);
-	console.log('Added entities:', addedEntities);
-	console.log('Removed entities:', removedEntities);
-}); // 📢 Subscribe to events for entity lifecycle and query changes
-```
-
-8. Querying Entities <br>
-   Retrieve entities based on specific criteria:
-
-```typescript
-// Query entities with specific components and tags
-const {
-	entities: taggedEntities,
-	addHook,
-	removeHook
-} = world.query({
-	tags: ['TagA']
-});
-
-console.log('Tagged entities with TagA:', taggedEntities);
-
-// Add hooks to monitor changes in the query result
-addHook((entity) => console.log('Entity added to TagA query result:', entity));
-removeHook((entity) => console.log('Entity removed from TagA query result:', entity)); // 🔍 Query entities and monitor changes in the result
-```
-
-9. Adding Systems and Running Simulation <br>
-   Define systems to process entities and run the simulation loop:
-
-```typescript
-// Add a system to process entities
-world.addSystem((entities, deltaTime) => {
-	// Example: Update positions based on velocities
-	entities.forEach((entity) => {
-		if ('position' in entity && 'velocity' in entity) {
-			entity.position.x += entity.velocity.dx * deltaTime;
-			entity.position.y += entity.velocity.dy * deltaTime;
-		}
+const player = world.createEntity({ 
+	speed: {d: 10, max: 100}, 
+	health: { current: 100, max: 100}}, 
+	({entity, componets}) => {
+		console.log('the entity:', entity, 'has components:', components);
 	});
-});
-
-// Run the simulation loop
-async function simulateWorld() {
-	const deltaTime = 1; // Time step for simulation (e.g., 1 second)
-	await world.runSystems(deltaTime);
-}
-
-simulateWorld().then(() => {
-	console.log('Simulation completed.');
-}); // ⚙️ Add systems to process entities and simulate the world
 ```
 
-# 🎯 Conclusion
+🧩 Add, remove components to the entity and update it:
+```typescript
+world.addComponent(player, 'position', { x: 0, y: 0 });
+world.removeComponent(world, 'position');
 
-This example demonstrates the basic usage of the ECS framework in TypeScript. Customize and expand upon this foundation to suit your specific application needs, such as game development, simulation systems, or any scenario requiring efficient entity management and behavior processing.
+// Or a faster way to add and remove multiple components as soon as resources load
 
-## 🚀 Advanced Features of the ECS Framework
+//using function
+world.updateState(player, (e) => e.position = {x: 0, y: 0});
 
-In addition to basic entity creation and component management, the ECS framework supports advanced features crucial for complex applications. Lifecycle hooks enable developers to react to entity additions and removals dynamically, facilitating real-time updates and event-driven architectures. Asynchronous systems allow for non-blocking processing of entities, accommodating tasks such as AI computations or network interactions without halting the main simulation loop. Event subscriptions provide granular control over entity lifecycle events and query result changes, empowering developers to implement sophisticated behavior and interaction patterns seamlessly. These features collectively enhance flexibility, scalability, and maintainability in applications ranging from game development to simulation engines and beyond, making the ECS framework a robust choice for managing complex entity behaviors and interactions efficiently.
+//using object
+world.updateState(player, {position: undefined});
+```
 
-## License
+🔍 Query entities:
+```typescript
+const moving = world.query({ has: ['speed', 'position'] }).entities
+const frozen = world.query({ where: (e) => if(e.frozen) return e}).entities
+const notmoving = world.query({ none: ['speed'], has: ['position']}) 
 
-[MIT](https://choosealicense.com/licenses/mit/)
+// create an id 
+const playerId = world.genID(player) 
+
+//get entity by an id
+const player = world.byID(playerId)
+```
+
+🧠 Create and add logic
+```typescript
+
+// this system should move only the moving entities
+function pyshicsSystem () {
+	return function () {
+		for( const {position, speed} of moving ) {
+			// pretend that the speed is mass 😅
+			position.y += speed.d * 9.81
+		}
+	}
+}
+
+function renderSystem () {
+	// setup goes here ...
+	const renderable = world.query({ has: ['render']});
+
+	// runs every time an entity is added to the query...
+	renderable.addHook((e) => {
+		console.log('Hi', e);
+	})
+
+	// ...and this every time is being removed
+	renderable.removeHook((e) => {
+		console.log('Bye', e);
+	})
+
+	return function () {
+		for( const {render} of renderable ) {
+			// rendering logic here
+		}
+	}
+}
+
+// add the systems to the world...
+world.addSystem(pyshicsSystem());
+world.addSystem(renderSystem());
+
+//...and run it in your favorite game loop
+
+/* definitely my favorite */
+setInterval(() => {
+	world.runSystems();
+}, 100)
+```
+
+So there you go you have your basic game. But is it enough? 🤔
+
+## 📚 Advanced Usage
+
+Since the ECS is type-safe let's add a typescript Entity type:
+
+```typescript
+type Entity = {
+	position: {x: number, y: number, z: number},
+	speed: {d: number},
+	render: {color: string},
+	health: {current?: number, max: number}
+}
+
+// and now create the world 
+const world = new World<Entity>();
+```
+
+ECS are also userful to create simple but performant ***game-engines***:
+
+```typescript
+	type Entity = {
+		position: {x: number, y: number},
+		speed: {d: number},
+		render: THREE.Object3D,
+		health: {current?: number, max: number}
+		engine: {
+			scene: THREE.Scene,
+			renderer: THREE.WebGLRenderer,
+			cameraId: number,
+			playerId: number,
+			playerInput: boolean[],
+		}
+	}
+
+const world = new World<Entity>();
+
+let { engine } = world.createEntity({ 
+	engine: {
+		scene: new THREE.Scene(),
+		renderer: new THREE.WebGLRenderer(),
+		cameraId: 0,
+		playerId: 0,
+		playerInput: []
+	}
+})
+```
+
+Create archetypes to make the entity creation easier
+
+```typescript
+const ColliderE = {
+	args: [0, 0, 0],
+	shape: 'cuboid',
+}
+
+const RigidBodyE = {
+	mass: 1,
+	velocity: {x: 0, y: 0, z: 0},
+	acceleration: {x: 0, y: 0, z: 0},
+	angularVelocity: 0,
+	angularAcceleration: 0,
+}
+
+const PlayerE = {
+	//spread both the rigidBody and collider archetypes
+	...ColliderE,
+	...RigidBodyE,
+}
+
+// register all the archetypes 
+world.registerArchetype('rigidbody', RigidBodyE);
+world.registerArchetype('collider', Collider);
+world.registerArchetype('player', PlayerE);
+
+//create an entity from the archetype
+const player = world.createEntityFromArchetype('player', {speed: {d: 1}});
+
+const camera = world.createEntity({ render: new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)});
+
+// some game-engine usage example
+const playerId = world.genID(player);
+const cameraId = world.genID(camera);
+
+engine.playerID = playerId;
+engine.cameraID = cameraId;
+```
+
+Another cool feature is pub/sub:
+
+```typescript
+
+//create an onKeyDown and onKeyUp function to capture input
+const onKeyDown = (e: KeyboardEvent) => {
+	world.emitEvent('player-input', [e.key === 'ArrowLeft', e.key === 'ArrowUp', e.key === 'ArrowDown', e.key === 'ArrowRight']);
+}
+
+const onKeyUp = (e: KeyboardEvent) => {
+	world.emitEvent('player-input', [e.key === 'ArrowLeft', e.key === 'ArrowUp', e.key =='ArrowDown', e.key === 'ArrowRight']);
+}
+
+//add the event listeners
+document.addEventListener('keydown', onKeyDown);
+document.addEventListener('keyup', onKeyUp);
+
+// make a function system called playeInput and subscribe to the event
+
+function playerInput () {
+	const player = world.byID(engine.playerId);
+
+	return function () {
+		// assuming you have a system taking care of the rigidbodies
+		world.subscribeToEvent('player-input', (input) => {
+			const [left, up, down, right] = input;
+			if (left) {
+				player.velocity.x += player.speed.d;
+			}
+			if (up) {
+				player.velocity.y += player.speed.d;
+			}
+			if (down) {
+				player.velocity.y -= player.speed.d;
+			}
+			if (right) {
+				player.velocity.x -= player.speed.d;
+			}
+	}
+}
+```
+So now that you know something about ECS you can start your journey to the cration of your project. Good luck 🍀

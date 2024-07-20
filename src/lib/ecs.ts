@@ -4,19 +4,6 @@ export interface Entity {
   }
   
   /**
-   * Helper function to find a key in a Map by its value.
-   * @param map The Map object to search.
-   * @param searchKey The value to search for.
-   * @returns The key associated with the search value, or undefined if not found.
-   */
-  function keyValue(map: Map<any, any>, searchKey: any) {
-	for (const [key, value] of map.entries()) {
-	  if (value === searchKey) return key;
-	}
-	return undefined;
-  }
-  
-  /**
    * Represents a lifecycle hook function that operates on an entity.
    */
   type LifecycleHook<T extends Entity> = (entity: T) => void;
@@ -69,8 +56,9 @@ export interface Entity {
 	private entityCreationQueue: Partial<T>[] = []; // Queue for deferred entity creation
   
 	constructor(systems: Array<((dt: number) => void | Promise<void>)>) {
-		this.systems.push(...systems);
+	  this.systems.push(...systems);
 	}
+  
 	/**
 	 * Generates a unique numeric ID for an entity.
 	 * @param entity The entity to generate the ID for.
@@ -85,7 +73,7 @@ export interface Entity {
 	/**
 	 * Retrieves an entity by its numeric ID.
 	 * @param id The ID of the entity to retrieve.
-	 * @returns The entity with the specified ID.
+	 * @returns The entity with the specified ID, or undefined if not found.
 	 */
 	byID(id: number): T | undefined {
 	  return this.entityById.get(id);
@@ -100,6 +88,7 @@ export interface Entity {
 	createEntity(components: Partial<T>, onAdd?: Function): T {
 	  const entity = { ...components } as T;
 	  this.entities.push(entity);
+	  this.genID(entity);
 	  if (onAdd) onAdd({ entity, components });
 	  this.emitEvent('entityAdded', { entity });
 	  this.onEntityAddedHooks.forEach((hook) => hook(entity));
@@ -167,10 +156,12 @@ export interface Entity {
 	 */
 	removeEntity(entity: T, onRemove?: Function) {
 	  const index = this.entities.indexOf(entity);
-	  if (index !== -1) {
+	  if (index > -1) {
 		this.entities.splice(index, 1);
-		let id = keyValue(this.entityById, entity);
-		this.entityById.delete(id);
+		const id = this.getKeyByValue(this.entityById, entity);
+		if (id !== undefined) {
+		  this.entityById.delete(id);
+		}
 		if (onRemove) onRemove({ entity });
 		this.emitEvent('entityRemoved', { entity });
 		this.onEntityRemovedHooks.forEach((hook) => hook(entity));
@@ -200,7 +191,7 @@ export interface Entity {
 	  while (this.entityCreationQueue.length > 0) {
 		const entityData = this.entityCreationQueue.shift();
 		if (entityData) {
-		  this.createEntity(entityData); // Assuming `createEntity` handles actual entity creation
+		  this.createEntity(entityData);
 		}
 	  }
 	}
@@ -212,7 +203,7 @@ export interface Entity {
 	 */
 	query(filter: {
 	  has?: (keyof T)[];
-	  where?: (entity: T) => void;
+	  where?: (entity: T) => boolean;
 	  none?: (keyof T)[];
 	  tags?: (keyof T)[];
 	}): {
@@ -352,12 +343,13 @@ export interface Entity {
 	  this.onEntityRemovedHooks = JSON.parse(Njson.onEntityRemovedHooks);
 	}
   
+	/**
+	 * Emits query events for the matched entities.
+	 * @param matchedEntities The entities that match the query criteria.
+	 */
 	private emitQueryEvents(matchedEntities: T[]) {
-	  const currentEntities = new Set(this.entities);
-	  const previousEntities = new Set(matchedEntities);
-  
-	  const addedEntities = [...currentEntities].filter((entity) => !previousEntities.has(entity));
-	  const removedEntities = [...previousEntities].filter((entity) => !currentEntities.has(entity));
+	  const addedEntities = matchedEntities.filter((entity) => !this.entities.includes(entity));
+	  const removedEntities = this.entities.filter((entity) => !matchedEntities.includes(entity));
   
 	  if (addedEntities.length > 0 || removedEntities.length > 0) {
 		this.emitEvent('queryChanged', {
@@ -383,9 +375,24 @@ export interface Entity {
 	/**
 	 * Adds an entity to the deferred creation queue for deferred entity creation.
 	 * @param entityData The data of the entity to be created.
+	 * @returns A new entity object created from the provided entity data.
 	 */
-	addEntityToQueue(entityData: Partial<T>) {
+	addEntityToQueue(entityData: Partial<T>): T {
 	  this.entityCreationQueue.push(entityData);
+	  return { ...entityData } as T;
+	}
+  
+	/**
+	 * Helper function to find a key in a Map by its value.
+	 * @param map The Map object to search.
+	 * @param searchKey The value to search for.
+	 * @returns The key associated with the search value, or undefined if not found.
+	 */
+	private getKeyByValue(map: Map<any, any>, searchKey: any): any {
+	  for (const [key, value] of map.entries()) {
+		if (value === searchKey) return key;
+	  }
+	  return undefined;
 	}
   }
   
