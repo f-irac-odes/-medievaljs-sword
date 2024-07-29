@@ -1,3 +1,5 @@
+<img src="ecs.svg" height="400px" widht="800px">
+
 # ⚔️ Sword: the agressive ECS for complex games
 
 ## 🤨 What is an ECS ?
