@@ -48,9 +48,10 @@
     "typescript-eslint": "^8.0.0-alpha.20",
     "vite": "^5.0.11"
   },
+  
   "default": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "type": "module",
+
   "dependencies": {
     "@dimforge/rapier3d-compat": "^0.13.1",
     "@manapotion/svelte": "^0.26.1",

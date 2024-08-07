@@ -30,6 +30,7 @@ export interface Entity {
    */
   export interface QueryEvent<T extends Entity> {
 	entities: T[];
+	singleton: T;
 	addedEntities: T[];
 	removedEntities: T[];
   }
@@ -88,7 +89,6 @@ export interface Entity {
 	createEntity(components: Partial<T>, onAdd?: Function): T {
 	  const entity = { ...components } as T;
 	  this.entities.push(entity);
-	  this.genID(entity);
 	  if (onAdd) onAdd({ entity, components });
 	  this.emitEvent('entityAdded', { entity });
 	  this.onEntityAddedHooks.forEach((hook) => hook(entity));
@@ -109,7 +109,6 @@ export interface Entity {
 	  }
 	  const entity = { ...archetype, ...newState } as T;
 	  this.entities.push(entity);
-	  this.genID(entity);
 	  this.emitEvent('entityAdded', { entity });
 	  this.onEntityAddedHooks.forEach((hook) => hook(entity));
 	  return entity;
@@ -208,6 +207,7 @@ export interface Entity {
 	  tags?: (keyof T)[];
 	}): {
 	  entities: T[];
+		singleton: T | null;
 	  addHook: (hook: LifecycleHook<T>) => void;
 	  removeHook: (hook: LifecycleHook<T>) => void;
 	} {
@@ -233,9 +233,12 @@ export interface Entity {
 	  };
   
 	  this.emitQueryEvents(matchedEntities);
+
+	  const singleton = matchedEntities.length === 1 ? matchedEntities[0] : null;
   
 	  return {
 		entities: matchedEntities,
+		singleton,
 		addHook,
 		removeHook,
 	  };
