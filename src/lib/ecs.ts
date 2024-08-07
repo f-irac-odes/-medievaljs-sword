@@ -332,18 +332,18 @@ export interface Entity {
 	 */
 	fromJSON(json: string) {
 	  const Njson = JSON.parse(json);
-	  this.entities = JSON.parse(Njson.entities) as T[];
-	  this.systems = JSON.parse(Njson.systems);
+	  this.entities = Njson.entities as T[];
+	  this.systems = Njson.systems;
 	  this.archetypes = new Map<string, Archetype<T>>();
-	  for (const [name, archetype] of JSON.parse(Njson.archetypes)) {
+	  for (const [name, archetype] of Njson.archetypes) {
 		this.archetypes.set(name, archetype);
 	  }
-	  for (const [name, eventListener] of JSON.parse(Njson.eventListeners)) {
+	  for (const [name, eventListener] of Njson.eventListeners) {
 		this.eventListeners.set(name, eventListener);
 	  }
-	  this.onUpdateHooks = JSON.parse(Njson.onUpdateHooks);
-	  this.onEntityAddedHooks = JSON.parse(Njson.onEntityAddedHooks);
-	  this.onEntityRemovedHooks = JSON.parse(Njson.onEntityRemovedHooks);
+	  this.onUpdateHooks = Njson.onUpdateHooks;
+	  this.onEntityAddedHooks = Njson.onEntityAddedHooks;
+	  this.onEntityRemovedHooks = Njson.onEntityRemovedHooks;
 	}
   
 	/**

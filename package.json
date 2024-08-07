@@ -1,6 +1,6 @@
 {
   "name": "@medieval/sword",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && npm run package",
@@ -49,8 +49,6 @@
     "vite": "^5.0.11"
   },
   
-  "default": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "type": "module",
 
   "dependencies": {
