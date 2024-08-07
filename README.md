@@ -47,29 +47,35 @@ ECS (Entity-Component-System) is an architectural pattern used in software devel
 ## 📘 Basic Usage
 
 📦 Install the package
+
 ```bash
  npm install @medieval/sword
 ```
-🌎 Create a world: 
+
+🌎 Create a world:
 
 ```typescript
-import { World } from '@medieval/sword'
+import { World } from '@medieval/sword';
 
-const world = new World()
+const world = new World();
 ```
+
 👾 Create an entity:
 
 ```typescript
-const player = world.createEntity({ 
-	speed: {d: 10, max: 100}, 
-	health: { current: 100, max: 100}}, 
-	({entity, componets}) => {
+const player = world.createEntity(
+	{
+		speed: { d: 10, max: 100 },
+		health: { current: 100, max: 100 }
+	},
+	({ entity, componets }) => {
 		console.log('the entity:', entity, 'has components:', components);
 	}
 );
 ```
 
 🧩 Add, remove components to the entity and update it:
+
 ```typescript
 world.addComponent(player, 'position', { x: 0, y: 0 });
 world.removeComponent(world, 'position');
@@ -77,57 +83,58 @@ world.removeComponent(world, 'position');
 // Or a faster way to add and remove multiple components as soon as resources load
 
 //using function
-world.updateState(player, (e) => e.position = {x: 0, y: 0});
+world.updateState(player, (e) => (e.position = { x: 0, y: 0 }));
 
 //using object
-world.updateState(player, {position: undefined});
+world.updateState(player, { position: undefined });
 ```
 
 🔍 Query entities:
+
 ```typescript
 const moving = world.query({ has: ['speed', 'position'] }).entities
 const frozen = world.query({ where: (e) => if(e.frozen) return e}).entities
-const notmoving = world.query({ none: ['speed'], has: ['position']}) 
+const notmoving = world.query({ none: ['speed'], has: ['position']})
 
-// create an id 
-const playerId = world.genID(player) 
+// create an id
+const playerId = world.genID(player)
 
 //get entity by an id
 const player = world.byID(playerId)
 ```
 
 🧠 Create and add logic
-```typescript
 
+```typescript
 // this system should move only the moving entities
-function pyshicsSystem () {
+function pyshicsSystem() {
 	return function () {
-		for( const {position, speed} of moving ) {
+		for (const { position, speed } of moving) {
 			// pretend that the speed is mass 😅
-			position.y += speed.d * 9.81
+			position.y += speed.d * 9.81;
 		}
-	}
+	};
 }
 
-function renderSystem () {
+function renderSystem() {
 	// setup goes here ...
-	const renderable = world.query({ has: ['render']});
+	const renderable = world.query({ has: ['render'] });
 
 	// runs every time an entity is added to the query...
 	renderable.addHook((e) => {
 		console.log('Hi', e);
-	})
+	});
 
 	// ...and this every time is being removed
 	renderable.removeHook((e) => {
 		console.log('Bye', e);
-	})
+	});
 
 	return function () {
-		for( const {render} of renderable ) {
+		for (const { render } of renderable) {
 			// rendering logic here
 		}
-	}
+	};
 }
 
 // add the systems to the world...
@@ -139,7 +146,7 @@ world.addSystem(renderSystem());
 /* definitely my favorite */
 setInterval(() => {
 	world.runSystems();
-}, 100)
+}, 100);
 ```
 
 So there you go you have your basic game. But is it enough? 🤔
@@ -150,36 +157,36 @@ Since the ECS is type-safe let's add a typescript Entity type:
 
 ```typescript
 type Entity = {
-	position: {x: number, y: number, z: number},
-	speed: {d: number},
-	render: {color: string},
-	health: {current?: number, max: number}
-}
+	position: { x: number; y: number; z: number };
+	speed: { d: number };
+	render: { color: string };
+	health: { current?: number; max: number };
+};
 
-// and now create the world 
+// and now create the world
 const world = new World<Entity>();
 ```
 
-ECS are also userful to create simple but performant ***game-engines***:
+ECS are also userful to create simple but performant **_game-engines_**:
 
 ```typescript
-	type Entity = {
-		position: {x: number, y: number},
-		speed: {d: number},
-		render: THREE.Object3D,
-		health: {current?: number, max: number}
-		engine: {
-			scene: THREE.Scene,
-			renderer: THREE.WebGLRenderer,
-			cameraId: number,
-			playerId: number,
-			playerInput: boolean[],
-		}
-	}
+type Entity = {
+	position: { x: number; y: number };
+	speed: { d: number };
+	render: THREE.Object3D;
+	health: { current?: number; max: number };
+	engine: {
+		scene: THREE.Scene;
+		renderer: THREE.WebGLRenderer;
+		cameraId: number;
+		playerId: number;
+		playerInput: boolean[];
+	};
+};
 
 const world = new World<Entity>();
 
-let { engine } = world.createEntity({ 
+let { engine } = world.createEntity({
 	engine: {
 		scene: new THREE.Scene(),
 		renderer: new THREE.WebGLRenderer(),
@@ -187,7 +194,7 @@ let { engine } = world.createEntity({
 		playerId: 0,
 		playerInput: []
 	}
-})
+});
 ```
 
 Create archetypes to make the entity creation easier
@@ -195,32 +202,34 @@ Create archetypes to make the entity creation easier
 ```typescript
 const ColliderE = {
 	args: [0, 0, 0],
-	shape: 'cuboid',
-}
+	shape: 'cuboid'
+};
 
 const RigidBodyE = {
 	mass: 1,
-	velocity: {x: 0, y: 0, z: 0},
-	acceleration: {x: 0, y: 0, z: 0},
+	velocity: { x: 0, y: 0, z: 0 },
+	acceleration: { x: 0, y: 0, z: 0 },
 	angularVelocity: 0,
-	angularAcceleration: 0,
-}
+	angularAcceleration: 0
+};
 
 const PlayerE = {
 	//spread both the rigidBody and collider archetypes
 	...ColliderE,
-	...RigidBodyE,
-}
+	...RigidBodyE
+};
 
-// register all the archetypes 
+// register all the archetypes
 world.registerArchetype('rigidbody', RigidBodyE);
 world.registerArchetype('collider', Collider);
 world.registerArchetype('player', PlayerE);
 
 //create an entity from the archetype
-const player = world.createEntityFromArchetype('player', {speed: {d: 1}});
+const player = world.createEntityFromArchetype('player', { speed: { d: 1 } });
 
-const camera = world.createEntity({ render: new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)});
+const camera = world.createEntity({
+	render: new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+});
 
 // some game-engine usage example
 const playerId = world.genID(player);
@@ -271,4 +280,5 @@ function playerInput () {
 	}
 }
 ```
+
 So now that you know something about ECS you can start your journey to the cration of your project. Good luck 🍀
