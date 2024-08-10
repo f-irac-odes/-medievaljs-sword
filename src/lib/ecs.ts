@@ -4,6 +4,13 @@ export interface Entity {
 }
 
 /**
+ * A utility type that marks the specified properties as required.
+ */
+export type With<E, P extends keyof E> = E & Required<Pick<E, P>>;
+
+export type Without<E, P extends keyof E> = Omit<E, P>;
+
+/**
  * Represents a lifecycle hook function that operates on an entity.
  */
 type LifecycleHook<T extends Entity> = (entity: T) => void;
@@ -135,6 +142,7 @@ export class World<T extends Entity> {
 	 */
 	addComponent<K extends keyof T>(entity: T, componentKey: K, componentValue: T[K]) {
 		entity[componentKey] = componentValue;
+		this.emitEvent('state-changed', { entity });
 		this.emitQueryEvents([entity]);
 	}
 
@@ -145,6 +153,7 @@ export class World<T extends Entity> {
 	 */
 	removeComponent<K extends keyof T>(entity: T, componentKey: K) {
 		delete entity[componentKey];
+		this.emitEvent('state-changed', { entity });
 		this.emitQueryEvents([entity]);
 	}
 
@@ -153,7 +162,7 @@ export class World<T extends Entity> {
 	 * @param entity The entity to remove from the world.
 	 * @param onRemove Optional callback function invoked when the entity is removed.
 	 */
-	removeEntity(entity: T, onRemove?: Function) {
+	removeEntity(entity: any, onRemove?: Function) {
 		const index = this.entities.indexOf(entity);
 		if (index > -1) {
 			this.entities.splice(index, 1);
@@ -211,29 +220,46 @@ export class World<T extends Entity> {
 		addHook: (hook: LifecycleHook<T>) => void;
 		removeHook: (hook: LifecycleHook<T>) => void;
 	} {
-		const matchedEntities = this.entities.filter((entity) => {
-			const hasComponents = filter.has
-				? filter.has.every((component) => component in entity)
-				: true;
-			const passesCondition = filter.where ? filter.where(entity) : true;
-			const lacksComponents = filter.none
-				? filter.none.every((component) => !(component in entity))
-				: true;
-			const hasTags = filter.tags ? filter.tags.every((tag) => !!entity[tag]) : true;
-			return hasComponents && passesCondition && lacksComponents && hasTags;
-		});
+		const match = () => {
+			const matchedEntities = this.entities.filter((entity) => {
+				const hasComponents = filter.has
+					? filter.has.every((component) => component in entity)
+					: true;
+				const passesCondition = filter.where ? filter.where(entity) : true;
+				const lacksComponents = filter.none
+					? filter.none.every((component) => !(component in entity))
+					: true;
+				const hasTags = filter.tags ? filter.tags.every((tag) => !!entity[tag]) : true;
+				return hasComponents && passesCondition && lacksComponents && hasTags;
+			});
+
+			return matchedEntities;
+		};
+
+		let matchedEntities = match();
 
 		const addHook = (hook: LifecycleHook<T>) => {
-			matchedEntities.forEach((entity) => hook(entity));
+			for (const e of matchedEntities) {
+				hook(e);
+			}
+
+			this.onEntityAddedHooks.push((entity) => {
+				const m = match();
+
+				if (m.includes(entity)) {
+					hook(entity);
+					matchedEntities.push(entity);
+				}
+
+			});
 		};
 
 		const removeHook = (hook: LifecycleHook<T>) => {
-			const removalSet = new Set(matchedEntities);
-			this.onEntityRemovedHooks.push((entity) => {
-				if (removalSet.has(entity)) {
-					hook(entity);
-				}
-			});
+
+			this.subscribeToEvent('entityRemoved', ({ entity }) => {
+				hook(entity);
+				matchedEntities.splice(matchedEntities.indexOf(entity), 1)
+			})
 		};
 
 		this.emitQueryEvents(matchedEntities);
