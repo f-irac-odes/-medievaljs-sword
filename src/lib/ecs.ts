@@ -254,6 +254,17 @@ export class World<T extends Entity> {
 			});
 		};
 
+		this.onEntityAddedHooks.push((entity) => {
+			const m = match();
+			if (m.includes(entity)) {
+				matchedEntities.push(entity);
+			}
+		})
+
+		this.onEntityRemovedHooks.push((entity) => {
+			matchedEntities.splice(matchedEntities.indexOf(entity), 1)
+		})
+
 		const removeHook = (hook: LifecycleHook<T>) => {
 
 			this.subscribeToEvent('entityRemoved', ({ entity }) => {
