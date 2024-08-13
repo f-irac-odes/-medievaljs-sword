@@ -239,19 +239,11 @@ export class World<T extends Entity> {
 		let matchedEntities = match();
 
 		const addHook = (hook: LifecycleHook<T>) => {
-			for (const e of matchedEntities) {
-				hook(e);
-			}
-
-			this.onEntityAddedHooks.push((entity) => {
-				const m = match();
-
-				if (m.includes(entity)) {
+			this.subscribeToEvent('entityAdded', ({ entity }) => {
+				if (match().includes(entity)) {
 					hook(entity);
-					matchedEntities.push(entity);
 				}
-
-			});
+			})
 		};
 
 		this.onEntityAddedHooks.push((entity) => {
@@ -262,14 +254,14 @@ export class World<T extends Entity> {
 		})
 
 		this.onEntityRemovedHooks.push((entity) => {
-			matchedEntities.splice(matchedEntities.indexOf(entity), 1)
+			match().splice(matchedEntities.indexOf(entity), 1)
 		})
 
 		const removeHook = (hook: LifecycleHook<T>) => {
-
 			this.subscribeToEvent('entityRemoved', ({ entity }) => {
-				hook(entity);
-				matchedEntities.splice(matchedEntities.indexOf(entity), 1)
+				if (match().includes(entity)) {
+					hook(entity);
+				}
 			})
 		};
 
