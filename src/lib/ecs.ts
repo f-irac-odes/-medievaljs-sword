@@ -132,6 +132,7 @@ export class World<T extends Entity> {
 		} else {
 			Object.assign(e, updateOrFn);
 		}
+		this.emitEvent('state-changed', { e });
 	}
 
 	/**
