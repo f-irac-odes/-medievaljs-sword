@@ -1,4 +1,4 @@
-# My ECS Game Engine 🎮⚙️🕹️
+# Sword 🎮⚙️🕹️
 
 > _"Why manage components manually, when you can let the **engine** do it for you?"_  
 > – Some wise developer 🧙‍♂️
@@ -108,7 +108,7 @@ We would love your help to make this engine even more **awesome**! Submit issues
 
 > _"With great engines, comes great responsibility."_ – Not Spider-Man, but close 🕸️
 
-Feel free to contribute at the [GitHub repository](https://github.com/my-ecs-game-engine).
+Feel free to contribute at the [GitHub repository](https://github.com/f-irac-odes/-medievaljs-sword).
 
 ## License 📝📜
 
@@ -116,7 +116,5 @@ This project is licensed under the **MIT License**.
 
 ---
 
-Now go ahead and build something epic! 🚀🎮 **Enjoy the ECS ride!**
+> Now go ahead and build something epic! 🚀🎮 **Enjoy the ECS ride!**
 ```
-
-You can copy and paste this directly into your README.md file now!
