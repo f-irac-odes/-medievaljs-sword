@@ -87,7 +87,7 @@ world.addSystem((dt) => {
 
 > 🧑‍💻 _"Just one query a day keeps the bugs away!"_ – Random dev wisdom
 
-## <🧠 Events
+## 🧠 Events
 
 **Life's more fun with events!** 
 
