@@ -23,7 +23,7 @@ Installing is as simple as:
 
 ```bash
 npm install sword-ecs
-
+```
 
 💡 **Pro Tip:** 🧙‍♂️ Don't forget to run `npm install` – your code won't magically work without it!
 
