@@ -1,36 +1,38 @@
-# Sword 🎮⚙️🕹️
+Got it! Here's the updated markdown with emojis before the text, and I've renamed the engine to **Sword**.
 
-> _"Why manage components manually, when you can let the **engine** do it for you?"_  
-> – Some wise developer 🧙‍♂️
+# Sword ECS ⚔️🛡️
 
-Welcome to **My ECS Game Engine** – the magical world where **entities** roam free, systems take care of all the heavy lifting, and components live happily ever after! 🏰✨
+> 🧙‍♂️ _"Why manage components manually, when you can let the **engine** do it for you?"_  
+> – Some wise developer
 
-## Features 🦾💡
+Welcome to **Sword ECS** – the magical world where **entities** roam free, systems take care of all the heavy lifting, and components live happily ever after! 🏰✨
 
-- **ECS Awesomeness**: Build your game with an Entity Component System, because who needs OOP? 🤷‍♂️
-- **Super-Smart Systems**: Let systems update your entities while you sit back and sip coffee ☕.
-- **Archetype Wizards**: Create entities from archetypes like a magician conjuring spells 🧙‍♀️.
-- **Event Chaos**: Built-in events to make everything more dramatic 📡🎭.
-- **Deferred Magic**: Entities appear *right on time* thanks to deferred creation ⏳.
-- **Query Like a Pro**: Retrieve entities like searching for your TV remote 🧐📺.
-- **Custom Hooks**: Insert your special logic like a master chef 🍲👨‍🍳.
+## 🦾💡 Features
 
-## Installation 🎉
+- 🎮 **ECS Awesomeness**: Build your game with an Entity Component System, because who needs OOP? 🤷‍♂️
+- 🤖 **Super-Smart Systems**: Let systems update your entities while you sit back and sip coffee ☕.
+- 🧙‍♀️ **Archetype Wizards**: Create entities from archetypes like a magician conjuring spells.
+- 📡 **Event Chaos**: Built-in events to make everything more dramatic.
+- ⏳ **Deferred Magic**: Entities appear *right on time* thanks to deferred creation.
+- 🔍 **Query Like a Pro**: Retrieve entities like searching for your TV remote.
+- 🍲 **Custom Hooks**: Insert your special logic like a master chef.
+
+## 🎉 Installation
 
 Installing is as simple as:
 
 ```bash
-npm install my-ecs-game-engine
-```
+npm install sword-ecs
 
-💡 **Pro Tip:** Don't forget to run `npm install` – your code won't magically work without it! 🧙‍♂️✨
 
-## Getting Started 🚀👾
+💡 **Pro Tip:** 🧙‍♂️ Don't forget to run `npm install` – your code won't magically work without it!
+
+## 🚀👾 Getting Started
 
 Here’s how you start creating your next **award-winning** game:
 
 ```typescript
-import { World, Entity } from 'my-ecs-game-engine';
+import { World, Entity } from 'sword-ecs';
 
 // Create your first epic entity
 interface MyEntity extends Entity {
@@ -61,9 +63,9 @@ function gameLoop(dt: number) {
 requestAnimationFrame(gameLoop);
 ```
 
-> **Disclaimer**: No real entities were harmed during this loop! 🐱‍👓
+> 📜 **Disclaimer**: No real entities were harmed during this loop! 🐱‍👓
 
-## Systems and Queries 🔍🔧
+## 🔍🔧 Systems and Queries
 
 Systems are your **game engine ninjas** 🥷, silently doing their job every frame. Define them and let them work their magic!
 
@@ -81,9 +83,9 @@ world.addSystem((dt) => {
 });
 ```
 
-> _"Just one query a day keeps the bugs away!"_ – Random dev wisdom 🧑‍💻
+> 🧑‍💻 _"Just one query a day keeps the bugs away!"_ – Random dev wisdom
 
-## Events 🎉🎊
+## 🎉🎊 Events
 
 **Life's more fun with events!** 🎉
 
@@ -95,26 +97,26 @@ world.subscribeToEvent('entityAdded', (event) => {
 world.emitEvent('customEvent', { message: 'Hello, World! 🌍' });
 ```
 
-> Fun fact: Emitting custom events is like sending a postcard to all your entities 📬.
+> 💌 Fun fact: Emitting custom events is like sending a postcard to all your entities.
 
-## Advanced Features 💼💣
+## 💼💣 Advanced Features
 
-- **Deferred Entity Creation**: Because some entities like to make a dramatic entrance ⌛.
-- **Custom Hooks**: Use lifecycle hooks like an exclusive backstage pass to control entity behavior 🎫.
+- ⌛ **Deferred Entity Creation**: Because some entities like to make a dramatic entrance.
+- 🎫 **Custom Hooks**: Use lifecycle hooks like an exclusive backstage pass to control entity behavior.
 
-## Contributing 🤝🎯
+## 🤝🎯 Contributing
 
 We would love your help to make this engine even more **awesome**! Submit issues, PRs, or just send us a virtual high-five! 🙌
 
-> _"With great engines, comes great responsibility."_ – Not Spider-Man, but close 🕸️
+> 🕸️ _"With great engines, comes great responsibility."_ – Not Spider-Man, but close
 
-Feel free to contribute at the [GitHub repository](https://github.com/f-irac-odes/-medievaljs-sword).
+Feel free to contribute at the [GitHub repository]((https://github.com/f-irac-odes/-medievaljs-sword)).
 
-## License 📝📜
+## 📝📜 License
 
 This project is licensed under the **MIT License**.
 
 ---
 
-> Now go ahead and build something epic! 🚀🎮 **Enjoy the ECS ride!**
+🚀🎮 Now go ahead and build something epic with **Sword ECS**! **Enjoy the ride!**
 ```
