@@ -1,6 +1,3 @@
-Ah, my bad! Here is the same README in markdown code format:
-
-```markdown
 # My ECS Game Engine 🎮⚙️🕹️
 
 > _"Why manage components manually, when you can let the **engine** do it for you?"_  
