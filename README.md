@@ -1,4 +1,4 @@
-# Sword ECS ⚔️🛡
+# Sword ECS ⚔️
 
 > 🧙‍♂️ _"Why manage components manually, when you can let the **engine** do it for you?"_  
 > – Some wise developer
@@ -15,7 +15,7 @@ Welcome to **Sword ECS** – the magical world where **entities** roam free, sys
 - 🔍 **Query Like a Pro**: Retrieve entities like searching for your TV remote.
 - 🍲 **Custom Hooks**: Insert your special logic like a master chef.
 
-## 🎉 Installation
+##  📓 Installation
 
 Installing is as simple as:
 
@@ -25,7 +25,7 @@ npm install sword-ecs
 
 💡 **Pro Tip:** 🧙‍♂️ Don't forget to run `npm install` – your code won't magically work without it!
 
-## 🚀👾 Getting Started
+## 🚀 Getting Started
 
 Here’s how you start creating your next **award-winning** game:
 
@@ -61,9 +61,9 @@ function gameLoop(dt: number) {
 requestAnimationFrame(gameLoop);
 ```
 
-> 📜 **Disclaimer**: No real entities were harmed during this loop! 🐱‍👓
+> 📜 **Disclaimer**: No real entities were harmed during this loop! 
 
-## 🔍🔧 Systems and Queries
+## 🔍 Systems and Queries
 
 Systems are your **game engine ninjas** 🥷, silently doing their job every frame. Define them and let them work their magic!
 
@@ -83,9 +83,9 @@ world.addSystem((dt) => {
 
 > 🧑‍💻 _"Just one query a day keeps the bugs away!"_ – Random dev wisdom
 
-## 🎉🎊 Events
+## 🎉 Events
 
-**Life's more fun with events!** 🎉
+**Life's more fun with events!** 
 
 ```typescript
 world.subscribeToEvent('entityAdded', (event) => {
@@ -97,12 +97,12 @@ world.emitEvent('customEvent', { message: 'Hello, World! 🌍' });
 
 > 💌 Fun fact: Emitting custom events is like sending a postcard to all your entities.
 
-## 💼💣 Advanced Features
+## 💼 Advanced Features
 
 - ⌛ **Deferred Entity Creation**: Because some entities like to make a dramatic entrance.
 - 🎫 **Custom Hooks**: Use lifecycle hooks like an exclusive backstage pass to control entity behavior.
 
-## 🤝🎯 Contributing
+## 🤝 Contributing
 
 We would love your help to make this engine even more **awesome**! Submit issues, PRs, or just send us a virtual high-five! 🙌
 
@@ -110,11 +110,11 @@ We would love your help to make this engine even more **awesome**! Submit issues
 
 Feel free to contribute at the [GitHub repository]((https://github.com/f-irac-odes/-medievaljs-sword)).
 
-## 📝📜 License
+## 📜 License
 
 This project is licensed under the **MIT License**.
 
 ---
 
-🚀🎮 Now go ahead and build something epic with **Sword ECS**! **Enjoy the ride!**
+🎮 Now go ahead and build something epic with **Sword ECS**! **Enjoy the ride!**
 ```
