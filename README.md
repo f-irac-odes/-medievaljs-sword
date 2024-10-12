@@ -15,6 +15,8 @@
 - 🔍 **Query Like a Pro**: Retrieve entities like searching for your TV remote.
 - 🍲 **Custom Hooks**: Insert your special logic like a master chef.
 
+---
+
 ##  📓 Installation
 
 Installing is as simple as:
@@ -24,6 +26,8 @@ npm install sword-ecs
 ```
 
 💡 **Pro Tip:** 🧙‍♂️ Don't forget to run `npm install` – your code won't magically work without it!
+
+---
 
 ## 🚀 Getting Started
 
@@ -105,7 +109,7 @@ world.emitEvent('customEvent', { message: 'Hello, World! 🌍' });
 
 ## 🤝 Contributing
 
-We would love your help to make this engine even more **awesome**! Submit issues, PRs, or just send us a virtual high-five! 🙌
+We would love your help to make this engine even more **awesome**! Submit issues, PRs, or just send us a virtual high-five!
 
 > 🕸️ _"With great engines, comes great responsibility."_ – Not Spider-Man, but close
 
