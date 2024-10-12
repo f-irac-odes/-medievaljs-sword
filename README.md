@@ -1,4 +1,6 @@
-# My ECS Game Engine 🎮⚙️🕹️
+<center>
+  # Sword 🎮
+</center> 
 
 > _"Why manage components manually, when you can let the **engine** do it for you?"_  
 > – Some wise developer 🧙‍♂️
@@ -20,4 +22,4 @@ Welcome to **My ECS Game Engine** – the magical world where **entities** roam 
 Installing is as simple as:
 
 ```bash
-npm install my-ecs-game-engine
+npm install @medieval/sword
