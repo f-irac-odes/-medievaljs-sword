@@ -3,7 +3,7 @@
 > 🧙‍♂️ _"Why manage components manually, when you can let the **engine** do it for you?"_  
 > – Some wise developer
 
-Welcome to **Sword ECS** – the magical world where **entities** roam free, systems take care of all the heavy lifting, and components live happily ever after! 🏰✨
+🏰 Welcome to **Sword ECS** – the magical world where **entities** roam free, systems take care of all the heavy lifting, and components live happily ever after!
 
 ## 💡 Features
 
@@ -83,7 +83,7 @@ world.addSystem((dt) => {
 
 > 🧑‍💻 _"Just one query a day keeps the bugs away!"_ – Random dev wisdom
 
-## 🎉 Events
+## <🧠 Events
 
 **Life's more fun with events!** 
 
@@ -97,10 +97,11 @@ world.emitEvent('customEvent', { message: 'Hello, World! 🌍' });
 
 > 💌 Fun fact: Emitting custom events is like sending a postcard to all your entities.
 
-## 💼 Advanced Features
+## Advanced Features
 
 - ⌛ **Deferred Entity Creation**: Because some entities like to make a dramatic entrance.
 - 🎫 **Custom Hooks**: Use lifecycle hooks like an exclusive backstage pass to control entity behavior.
+---
 
 ## 🤝 Contributing
 
