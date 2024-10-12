@@ -1,13 +1,11 @@
-Got it! Here's the updated markdown with emojis before the text, and I've renamed the engine to **Sword**.
-
-# Sword ECS ⚔️🛡️
+# Sword ECS ⚔️🛡
 
 > 🧙‍♂️ _"Why manage components manually, when you can let the **engine** do it for you?"_  
 > – Some wise developer
 
 Welcome to **Sword ECS** – the magical world where **entities** roam free, systems take care of all the heavy lifting, and components live happily ever after! 🏰✨
 
-## 🦾💡 Features
+## 💡 Features
 
 - 🎮 **ECS Awesomeness**: Build your game with an Entity Component System, because who needs OOP? 🤷‍♂️
 - 🤖 **Super-Smart Systems**: Let systems update your entities while you sit back and sip coffee ☕.
