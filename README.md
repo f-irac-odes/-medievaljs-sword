@@ -22,7 +22,7 @@
 Installing is as simple as:
 
 ```bash
-npm install sword-ecs
+npm install @medieval/sword --force
 ```
 
 💡 **Pro Tip:** 🧙‍♂️ Don't forget to run `npm install` – your code won't magically work without it!
@@ -122,4 +122,4 @@ This project is licensed under the **MIT License**.
 ---
 
 🎮 Now go ahead and build something epic with **Sword ECS**! **Enjoy the ride!**
-```
+
