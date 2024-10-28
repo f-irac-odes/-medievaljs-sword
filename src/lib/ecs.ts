@@ -1,3 +1,5 @@
+import { makestate, type Store } from '@medieval/martingale';
+
 // Define interfaces and types
 export interface Entity {
 	[key: string]: any;
@@ -62,6 +64,7 @@ export class World<T extends Entity> {
 	private entityById: Map<number, T> = new Map(); // Map to store entities by their numeric ID
 	private nextId: number = 1; // Counter for generating unique numeric IDs
 	private entityCreationQueue: Partial<T>[] = []; // Queue for deferred entity creation
+	observers: Map<number, (changes: { key: keyof T; newValue: T[keyof T] }) => void> = new Map();
 
 	constructor(systems: Array<(dt: number) => void | Promise<void>>) {
 		this.systems.push(...systems);
@@ -93,7 +96,7 @@ export class World<T extends Entity> {
 	 * @param onAdd Optional callback function invoked when the entity is added.
 	 * @returns The created entity.
 	 */
-	createEntity(components: Partial<T>, onAdd?: Function): T {
+	spawn(components: Partial<T>, onAdd?: Function): T {
 		const entity = { ...components } as T;
 		this.entities.push(entity);
 		if (onAdd) onAdd({ entity, components });
@@ -124,15 +127,16 @@ export class World<T extends Entity> {
 	/**
 	 * Updates an entity with new components or modifies existing components.
 	 * @param e The entity to update.
-	 * @param updateOrFn An object or function specifying the updates.
+	 * @param updateOrFn An object with partial updates or a function to update the entity.
 	 */
-	updateEntity(e: T, updateOrFn: Function | object) {
+	update(e: T, updateOrFn: Partial<T> | ((e: T) => void)): void {
 		if (typeof updateOrFn === 'function') {
-			updateOrFn(e);
+			updateOrFn(e); // `updateOrFn` modifies `e` in place.
 		} else {
-			Object.assign(e, updateOrFn);
+			Object.assign(e, updateOrFn); // Merges `updateOrFn` fields into `e`.
 		}
-		this.emitEvent('state-changed', { e });
+
+		this.emitEvent('state-changed', { e } as { e: T });
 	}
 
 	/**
@@ -141,7 +145,7 @@ export class World<T extends Entity> {
 	 * @param componentKey The key of the component to add.
 	 * @param componentValue The value of the component to add.
 	 */
-	addComponent<K extends keyof T>(entity: T, componentKey: K, componentValue: T[K]) {
+	add<K extends keyof T>(entity: T, componentKey: K, componentValue: T[K]) {
 		entity[componentKey] = componentValue;
 		this.emitEvent('state-changed', { entity });
 		this.emitQueryEvents([entity]);
@@ -152,7 +156,7 @@ export class World<T extends Entity> {
 	 * @param entity The entity from which the component will be removed.
 	 * @param componentKey The key of the component to remove.
 	 */
-	removeComponent<K extends keyof T>(entity: T, componentKey: K) {
+	remove<K extends keyof T>(entity: T, componentKey: K) {
 		delete entity[componentKey];
 		this.emitEvent('state-changed', { entity });
 		this.emitQueryEvents([entity]);
@@ -163,7 +167,7 @@ export class World<T extends Entity> {
 	 * @param entity The entity to remove from the world.
 	 * @param onRemove Optional callback function invoked when the entity is removed.
 	 */
-	removeEntity(entity: any, onRemove?: Function) {
+	destroy(entity: any, onRemove?: Function) {
 		const index = this.entities.indexOf(entity);
 		if (index > -1) {
 			this.entities.splice(index, 1);
@@ -189,7 +193,7 @@ export class World<T extends Entity> {
 	 * Runs all systems in the world with the given delta time.
 	 * @param deltaTime The time elapsed since the last update.
 	 */
-	async runSystems(deltaTime: number) {
+	async run(deltaTime: number) {
 		this.onUpdateHooks.forEach((hook) => hook(deltaTime));
 
 		for (const system of this.systems) {
@@ -200,7 +204,7 @@ export class World<T extends Entity> {
 		while (this.entityCreationQueue.length > 0) {
 			const entityData = this.entityCreationQueue.shift();
 			if (entityData) {
-				this.createEntity(entityData);
+				this.spawn(entityData);
 			}
 		}
 	}
@@ -240,11 +244,11 @@ export class World<T extends Entity> {
 		let matchedEntities = match();
 
 		const addHook = (hook: LifecycleHook<T>) => {
-			this.subscribeToEvent('entityAdded', ({ entity }) => {
+			this.subscribe<T>('entityAdded', ({ entity }) => {
 				if (match().includes(entity)) {
 					hook(entity);
 				}
-			})
+			});
 		};
 
 		this.onEntityAddedHooks.push((entity) => {
@@ -252,18 +256,18 @@ export class World<T extends Entity> {
 			if (m.includes(entity)) {
 				matchedEntities.push(entity);
 			}
-		})
+		});
 
 		this.onEntityRemovedHooks.push((entity) => {
-			match().splice(matchedEntities.indexOf(entity), 1)
-		})
+			match().splice(matchedEntities.indexOf(entity), 1);
+		});
 
 		const removeHook = (hook: LifecycleHook<T>) => {
-			this.subscribeToEvent('entityRemoved', ({ entity }) => {
+			this.subscribe<T>('entityRemoved', ({ entity }) => {
 				if (match().includes(entity)) {
 					hook(entity);
 				}
-			})
+			});
 		};
 
 		this.emitQueryEvents(matchedEntities);
@@ -283,7 +287,7 @@ export class World<T extends Entity> {
 	 * @param eventName The name of the event to subscribe to.
 	 * @param callback The callback function to invoke when the event occurs.
 	 */
-	subscribeToEvent(eventName: string, callback: EventCallback<any>) {
+	subscribe<T>(eventName: string, callback: EventCallback<T>) {
 		if (!this.eventListeners.has(eventName)) {
 			this.eventListeners.set(eventName, []);
 		}
@@ -430,5 +434,46 @@ export class World<T extends Entity> {
 			if (value === searchKey) return key;
 		}
 		return undefined;
+	}
+
+	/**
+	 * Observes changes on a specific entity and calls the provided callback on any modification.
+	 * @param entity The entity to observe.
+	 * @param callback The callback function invoked when a property changes.
+	 * @returns The proxy-wrapped entity.
+	 */
+	observe(entity: T, callback: (changes: { key: keyof T; newValue: T[keyof T] }) => void): T {
+		// Generate a unique ID for the entity if it doesn't already have one.
+		const entityId = this.genID(entity);
+
+		// Register the callback in the observers map.
+		this.observers.set(entityId, callback);
+
+		// Return a proxy to observe changes to the entity's properties.
+		return new Proxy(entity, {
+			set: (target, property: keyof T, value: T[keyof T]) => {
+				// Update the target property.
+				target[property] = value;
+
+				// Trigger the callback with change details.
+				callback({ key: property, newValue: value });
+
+				// Emit event for external systems if needed.
+				this.emitEvent('state-changed', { entity: target });
+
+				return true;
+			}
+		});
+	}
+
+	/**
+	 * Stops observing changes on a specific entity.
+	 * @param entity The entity to stop observing.
+	 */
+	unobserve(entity: T) {
+		const entityId = this.getKeyByValue(this.entityById, entity);
+		if (entityId !== undefined) {
+			this.observers.delete(entityId);
+		}
 	}
 }
