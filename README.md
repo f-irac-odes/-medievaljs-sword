@@ -52,7 +52,7 @@ const world = new World<MyEntity>([
 	}
 ]);
 
-const player = world.createEntity({
+const player = world.spawn({
 	position: { x: 0, y: 0 },
 	velocity: { x: 1, y: 1 },
 	health: 100 // Because you don't want your player dying too soon! 💀
