@@ -9,7 +9,6 @@ I'll create a README with sections explaining how to use this file, its features
 
 ### README
 
-```markdown
 # 🏰 Medieval ECS TypeScript Library
 
 A TypeScript library implementing an **Entity-Component-System (ECS)** architecture, ideal for game development or simulations where entities require flexible and reusable components. 
@@ -116,5 +115,3 @@ Contributions are welcome! If you’d like to improve this library, please fork 
 ## 📄 License
 
 This project is licensed under the MIT License.
-
-```
