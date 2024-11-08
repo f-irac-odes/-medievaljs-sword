@@ -1,5 +1,3 @@
-import { makestate, type Store } from '@medieval/martingale';
-
 // Define interfaces and types
 export interface Entity {
 	[key: string]: any;
@@ -477,3 +475,14 @@ export class World<T extends Entity> {
 		}
 	}
 }
+
+
+export class Component<T extends {}> {
+
+	value: T;
+
+	constructor(value: T) {
+		this.value = value;
+	}
+}
+
