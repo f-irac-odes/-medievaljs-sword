@@ -1,15 +1,4 @@
-- **Interfaces and Types**:
-  - Defines entities, events, lifecycle hooks, and types that modify properties (`With`, `Without`) and perform operations on entities.
-  - Lifecycle and update hooks manage entity lifecycle and system updates.
-- **Core Functionality**: Implements event-driven mechanisms for managing entities, possibly through query and update hooks, which are typical in ECS patterns.
-
-I'll create a README with sections explaining how to use this file, its features, and necessary dependencies. I'll also include emojis to add clarity and friendliness to each section.
-
----
-
-### README
-
-# 🏰 Medieval ECS TypeScript Library
+# 🏰 Sword
 
 A TypeScript library implementing an **Entity-Component-System (ECS)** architecture, ideal for game development or simulations where entities require flexible and reusable components. 
 
