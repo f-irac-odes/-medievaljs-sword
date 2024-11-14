@@ -46,5 +46,5 @@
     "vite": "^5.0.11"
   },
   "type": "module",
-  "dependencies": {}
+  "dependencies": { "@types/three": "^0.170.0", "three": "^0.170.0" }
 }
