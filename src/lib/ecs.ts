@@ -10,9 +10,6 @@ export class World<T extends AnyEntity> extends Collection<T> {
 	removed: Array<EventC<Partial<T>>> = [];
 	_runner: Runner<Partial<T>> = new Runner();
 
-	/**
-	 * Override the add method to include the `entityAdded` event listeners.
-	 */
 	add<V extends IComponentValue>(
 		entity: Partial<T>,
 		component: Component<V> | keyof T,
@@ -22,17 +19,13 @@ export class World<T extends AnyEntity> extends Collection<T> {
 		this.added.forEach((listener) => listener(entity));
 	}
 
-	/**
-	 * Override the destroy method to include the `entityRemoved` event listeners.
-	 */
+
 	destroy(entity: Partial<T>): void {
 		super.destroy(entity);
 		this.removed.forEach((listener) => listener(entity));
 	}
 
-	/**
-	 * Event subscription system for `entityAdded` and `entityRemoved`.
-	 */
+
 	on = {
 		entityAdded: (callback: EventC<Partial<T>>) => {
 			this.added.push(callback);
@@ -42,16 +35,12 @@ export class World<T extends AnyEntity> extends Collection<T> {
 		}
 	};
 
-	/**
-	 * Run systems using the Runner instance.
-	 */
+
 	run(dt: number): void {
 		this._runner.update(dt, this._entities);
 	}
 
-	/**
-	 * Add a system to the runner.
-	 */
+
 	addSystem(system: ISystem<Partial<T>>): void {
 		this._runner.addSystem(system);
 	}
