@@ -1,8 +1,9 @@
 # 🏰 Sword
 
-A TypeScript library implementing an **Entity-Component-System (ECS)** architecture, ideal for game development or simulations where entities require flexible and reusable components. 
+A TypeScript library implementing an **Entity-Component-System (ECS)** architecture, ideal for game development or simulations where entities require flexible and reusable components.
 
 ## 📋 Table of Contents
+
 - [Introduction](#introduction)
 - [Features](#features)
 - [Installation](#installation)
@@ -18,6 +19,7 @@ A TypeScript library implementing an **Entity-Component-System (ECS)** architect
 This library provides a streamlined way to manage entities in a game or simulation, using a modular ECS pattern. With **lifecycle hooks** and **event-driven updates**, entities can interact, update, and respond to game-state changes efficiently.
 
 ## 🌟 Features
+
 - **Entity Management**: Easily create and manage entities with flexible attributes.
 - **Lifecycle Hooks**: Control entities through customizable hooks that respond to lifecycle events.
 - **Event System**: Manage events between entities, allowing complex interactions.
@@ -52,15 +54,16 @@ Then, add this library to your project.
 ## 🔄 Hooks & Events
 
 The library includes the following hooks and events:
+
 - **LifecycleHook**: Operates on entities, handling initialization, updates, and destruction.
 - **UpdateHook**: Runs every update cycle (e.g., on every game frame).
 - **EventCallback**: Responds to data-based events.
-  
+
 ### Example Hook
 
 ```typescript
 const onEntityCreate: LifecycleHook<MyEntity> = (entity) => {
-  console.log(`Entity created: ${entity}`);
+	console.log(`Entity created: ${entity}`);
 };
 ```
 
@@ -68,7 +71,7 @@ const onEntityCreate: LifecycleHook<MyEntity> = (entity) => {
 
 ```typescript
 const onPlayerAttack: EventCallback<AttackEvent> = (eventData) => {
-  console.log(`Player attacked with power: ${eventData.power}`);
+	console.log(`Player attacked with power: ${eventData.power}`);
 };
 ```
 
@@ -81,19 +84,19 @@ import { Entity, With, Without, LifecycleHook, UpdateHook } from './ecs';
 
 // Define a new entity
 interface Player extends Entity {
-  health: number;
-  power: number;
+	health: number;
+	power: number;
 }
 
 // Create lifecycle hooks
 const onPlayerSpawn: LifecycleHook<Player> = (player) => {
-  player.health = 100;
-  console.log("Player spawned with full health.");
+	player.health = 100;
+	console.log('Player spawned with full health.');
 };
 
 // Update hook
 const gameTick: UpdateHook = (deltaTime) => {
-  console.log(`Game tick: ${deltaTime}`);
+	console.log(`Game tick: ${deltaTime}`);
 };
 ```
 
