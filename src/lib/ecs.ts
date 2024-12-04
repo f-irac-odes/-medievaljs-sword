@@ -1,26 +1,26 @@
-type IGameEvent<T> = { name: string; payload: T };
+export type IGameEvent<T> = { name: string; payload: T };
 
 export type Entity = { id: string; [key: string]: any };
 
-type QueryPredicate<T> = (entity: Partial<T>) => boolean;
+export type QueryPredicate<T> = (entity: Partial<T>) => boolean;
 
-type EventContext<T extends Entity, P> = {
+export type EventContext<T extends Entity, P> = {
 	world: World<T>;
 	entity: Partial<T>;
 	payload: P;
 };
 
-type Condition<T, P = any> = (context: EventContext<T, P>) => boolean;
+export type Condition<T, P = any> = (context: EventContext<T, P>) => boolean;
 
-type Action<T, P = any> = (context: EventContext<T, P>) => void;
+export type Action<T, P = any> = (context: EventContext<T, P>) => void;
 
-type IEvent<T, P = any> = {
+export type IEvent<T, P = any> = {
 	priority?: number; // Higher priority executes earlier
 	conditions?: Condition<T, P>[];
 	actions: Action<T, P>[];
 };
 
-type Middleware<T extends Entity> = (
+export type Middleware<T extends Entity> = (
 	event: IGameEvent<any>,
 	world: World<T>,
 	next: () => void
