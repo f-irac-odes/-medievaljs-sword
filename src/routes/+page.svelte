@@ -174,16 +174,34 @@
 				({ world }) => {
 					const enemies = world.queryEntities((e) => !e.isPlayer! && !e.isBullet && e.isAlive!);
 					const [player] = world.queryEntities((e) => e.isPlayer! && e.isAlive!);
+
+					if (!player) return; // Check for the player's existence just once.
+
 					for (const enemy of enemies) {
-						if (!player) return;
-						if (player.x! > enemy.x!) {
-							enemy.dx = +1;
-						} else if (player.x! < enemy.x!) {
+						// Calculate movement direction based on the player's position relative to the enemy.
+						const dxToPlayer = player.x! - enemy.x!;
+						const dyToPlayer = player.y! - enemy.y!;
+
+						// Set horizontal movement
+						if (dxToPlayer > 0) {
+							enemy.x! += 1; // Move right
+							enemy.dx = 1;
+						} else if (dxToPlayer < 0) {
+							enemy.x! -= 1; // Move left
 							enemy.dx = -1;
-						} else if (player.y! > enemy.y!) {
-							enemy.dy = +1;
-						} else if (player.y! < enemy.y!) {
+						} else {
+							enemy.dx = 0; // No horizontal movement
+						}
+
+						// Set vertical movement
+						if (dyToPlayer > 0) {
+							enemy.y! += 1; // Move down (player is below)
+							enemy.dy = 1;
+						} else if (dyToPlayer < 0) {
+							enemy.y! -= 1; // Move up (player is above)
 							enemy.dy = -1;
+						} else {
+							enemy.dy = 0; // No vertical movement
 						}
 					}
 				}
