@@ -5,8 +5,8 @@
 	let isGameStarted = false;
 
 	let button: HTMLButtonElement;
-    let div: HTMLDivElement;
-    let start: HTMLDivElement;
+	let div: HTMLDivElement;
+	let start: HTMLDivElement;
 
 	onMount(() => {
 		// Canvas Setup
@@ -126,12 +126,12 @@
 				({ world }) => {
 					const bullets = world.queryEntities((e) => e.isBullet! && e.isAlive!);
 					const enemies = world.queryEntities((e) => !e.isPlayer! && !e.isBullet && e.isAlive!);
-                    const [player] = world.queryEntities((e) => e.isPlayer! && e.isAlive!);
+					const [player] = world.queryEntities((e) => e.isPlayer! && e.isAlive!);
 
 					// Check bullet-enemy collisions
 					for (const bullet of bullets) {
 						for (const enemy of enemies) {
-                            if(!player) return
+							if (!player) return;
 							if (
 								bullet.x! < enemy.x! + enemy.width! &&
 								bullet.x! + bullet.width! > enemy.x! &&
@@ -139,66 +139,66 @@
 								bullet.y! + bullet.height! > enemy.y!
 							) {
 								bullet.isAlive = false;
-                                world.destroy(bullet);
+								world.destroy(bullet);
 								enemy.health! -= 10;
 								if (enemy.health! <= 0) enemy.isAlive = false;
-                                break;
+								break;
 							}
 						}
 					}
 
-                    for (const enemy of enemies) {
-                        if(!player) return
-                        if(
-                            player.x! < enemy.x! + enemy.width! &&
-                            player.x! + player.width! > enemy.x! &&
-                            player.y! < enemy.y! + enemy.height! &&
-                            player.y! + player.height! > enemy.y!
-                        ) {
-                            player.health! -= 5;
-                            if (player.health! <= 0){
-                                window.removeEventListener("keydown", () => {});
-                                window.removeEventListener("keyup", () => {});
-                                player.isAlive = false;
-                            }
+					for (const enemy of enemies) {
+						if (!player) return;
+						if (
+							player.x! < enemy.x! + enemy.width! &&
+							player.x! + player.width! > enemy.x! &&
+							player.y! < enemy.y! + enemy.height! &&
+							player.y! + player.height! > enemy.y!
+						) {
+							player.health! -= 5;
+							if (player.health! <= 0) {
+								window.removeEventListener('keydown', () => {});
+								window.removeEventListener('keyup', () => {});
+								player.isAlive = false;
+							}
 
-                            if(!player.isAlive) {
-                                world.destroy(player);
-                                canvas.style = "display: none";
-                                div.style = "display: flex";
-                            }
-                            break;
-                        }
-                    }
+							if (!player.isAlive) {
+								world.destroy(player);
+								canvas.style = 'display: none';
+								div.style = 'display: flex';
+							}
+							break;
+						}
+					}
 				},
-                ({ world }) => {
+				({ world }) => {
 					const enemies = world.queryEntities((e) => !e.isPlayer! && !e.isBullet && e.isAlive!);
-                    const [player] = world.queryEntities((e) => e.isPlayer! && e.isAlive!)
-                    for (const enemy of enemies) {
-                        if(!player) return
-                        if(player.x! > enemy.x!) {
-                            enemy.dx = +1;
-                        } else if (player.x! < enemy.x!) {
-                            enemy.dx = -1;
-                        } else if (player.y! > enemy.y!) {
-                            enemy.dy = +1;
-                        } else if (player.y! < enemy.y!) {
-                            enemy.dy = -1;
-                        }
-                    }
-                }
+					const [player] = world.queryEntities((e) => e.isPlayer! && e.isAlive!);
+					for (const enemy of enemies) {
+						if (!player) return;
+						if (player.x! > enemy.x!) {
+							enemy.dx = +1;
+						} else if (player.x! < enemy.x!) {
+							enemy.dx = -1;
+						} else if (player.y! > enemy.y!) {
+							enemy.dy = +1;
+						} else if (player.y! < enemy.y!) {
+							enemy.dy = -1;
+						}
+					}
+				}
 			]
 		});
 
 		// Input Handling
 		const keys: Record<string, boolean> = {};
 		window.addEventListener('keydown', (e) => {
-            e.stopPropagation();
+			e.stopPropagation();
 			keys[e.key] = true;
 			if (e.key === ' ') {
 				world.emitEvent({ name: 'shoot', payload: null });
 			}
-		}, );
+		});
 		window.addEventListener('keyup', (e) => {
 			keys[e.key] = false;
 		});
@@ -297,7 +297,7 @@
 		function startGame() {
 			isGameStarted = true;
 			button.style = 'display: none';
-            start.style = "display: none"
+			start.style = 'display: none';
 			canvas.style = 'display: block';
 			number = gameLoop();
 		}
@@ -319,14 +319,14 @@
 </div>
 
 <div style="display: none;" bind:this={div}>
-    <h1>DEFEAT</h1>
+	<h1>DEFEAT</h1>
 </div>
 
 <style>
-    h1 {
-        color: white;
-        font-size: 50px;
-    }
+	h1 {
+		color: white;
+		font-size: 50px;
+	}
 	:global(body) {
 		margin: 0;
 	}
