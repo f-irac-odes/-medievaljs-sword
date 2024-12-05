@@ -141,9 +141,9 @@
 								world.destroy(bullet);
 								enemy.health -= 10;
 								if (enemy.health! <= 0){
-                                    enemy.isAlive = false;
-                                    world.destroy(enemy);
-                                };
+				                                    enemy.isAlive = false;
+				                                    world.destroy(enemy);
+				                                };
 								break
 							}
 						}
